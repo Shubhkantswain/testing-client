@@ -1,31 +1,16 @@
-import { json } from "@remix-run/node";
-import { Form } from "@remix-run/react";
-import * as cookie from "cookie";
+import { json } from "@remix-run/cloudflare";
+import { useLoaderData } from "@remix-run/react";
 
-export const action = async ({ request }: { request: Request }) => {
-  const headers = new Headers();
-
-  // Set a cookie with a value
-  const cookieHeader = cookie.serialize("myCookie", "hello_remix", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: 60 * 60 * 24, // 1 day
-  });
-
-  headers.append("Set-Cookie", cookieHeader);
-
-  return json({ success: true, message: "Cookie set successfully!" }, { headers });
+export const loader = async () => {
+  return json({ message: "Welcome to the SSR page in Remix!" });
 };
 
 export default function Index() {
+  const data = useLoaderData<typeof loader>();
+
   return (
     <div>
-      <h1>Set Cookie Example</h1>
-      <Form method="post">
-        <button type="submit">Set Cookie</button>
-      </Form>
+      <h1>{data.message}</h1>
     </div>
   );
 }
